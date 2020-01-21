@@ -1,0 +1,11 @@
+{
+  "include": [
+      "./src/**/*.ts"
+  ],
+  "compilerOptions": {
+      "noImplicitAny": true,
+      "target": "es5",
+      "sourceMap": true,
+      "outDir": "./dist"
+  }
+}
