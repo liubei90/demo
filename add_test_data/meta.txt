@@ -1,0 +1,5 @@
+user_id||varchar(11)||id[:random_number(11)]
+user_name||varchar(64)||学生名字
+content||varchar(1000)||学校名字
+content2||varchar(1000)||时间
+content3||varchar(1000)||时间
