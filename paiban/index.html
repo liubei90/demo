@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .mouth-content {
+      margin: 20px 10px;
+    }
+  </style>
+  <script src="./index.js"></script>
+</head>
+<body>
+  <div id="app">
+    
+  </div>
+
+  <script>
+    function createTable(items, mouth) {
+      var trStr = '';
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        trStr += `
+        <tr>
+          <td>${item['name']}</td>
+          <td>${item['depart']}</td>
+        </tr>
+        `;
+      }
+
+      var t = `
+      <div>第${mouth}个月</div>
+      <table width="300" border="1" cellspacing="0">
+        <tr>
+          <th>姓名</th>
+          <th>科室</th>
+        </tr>
+        ${trStr}
+      </table>`
+
+      var d = document.createElement('div');
+      d.classList.add('mouth-content');
+      d.innerHTML = t;
+
+      return d;
+    }
+
+    var tableData = [];
+    for (var i = 0; i < mouth_count; i++) {
+      tableData[i] = [];
+      for (var si = 0; si < students.length; si++ ) {
+        var name = students[si];
+        var item = {
+          name: name,
+          depart: students_info[name]['sections'][i],
+        }
+        tableData[i].push(item);
+      }
+    }
+
+    var app = document.querySelector('#app');
+
+    for (var i = 0; i < tableData.length; i++) {
+      app.append(createTable(tableData[i], i+1));
+    }
+
+  </script>
+</body>
+</html>
