@@ -429,7 +429,7 @@ var togeter_students_index = {
 var togeter_students_tmp = [];
 
 // 7个月
-var depart_tmp = [null];
+var depart_tmp = [];
 
 function new_depart_count() {
   var res = {};
@@ -442,19 +442,19 @@ function new_depart_count() {
 }
 
 (function() {
-  for (var i = 1; i < 8; i++) {
+  for (var i = 0; i < 10; i++) {
     depart_tmp[i] = new_depart_count();
   }
 })();
 
 var depart_score = {
-  '急诊': 35, 
-  '心病科': 35, 
+  '急诊': 6, 
+  '心病科': 3, 
   'ICU': 6, 
   '肝胆脾胃病科': 2, 
   '肺病科': 6, 
   '脑病科': 2, 
-  '肾病': 3, 
+  '肾病': 6, 
   '内分泌': 1
 }
 
@@ -468,7 +468,8 @@ function jian_student_in_depart(mouth, depart) {
   mouth_depart[depart] -= depart_score[depart];
 }
 
-function get_less_student_count_depart(mouth, exclude_depart, si) {
+function get_less_student_count_depart(mouth, exclude_depart, si, cIndex) {
+  var is_even = cIndex % 2 == 0;
   var mouth_depart = depart_tmp[mouth];
   var departs = Object.keys(mouth_depart);
   // 随机
@@ -477,13 +478,16 @@ function get_less_student_count_depart(mouth, exclude_depart, si) {
   var min_depart = null;
 
   for(var i = 0; i < departs.length; i++) {
-    var index = (si + i + 1) % departs.length;
+    // var index = (si + i + 1) % departs.length;
+    var index = i;
     var d = departs[index];
     if (exclude_depart.indexOf(d) > -1) {
       continue;
     }
 
-    if (mouth_depart[d] < min_depart_count) {
+    var cur_score = mouth_depart[d];
+
+    if (cur_score < min_depart_count) {
       min_depart_count = mouth_depart[d];
       min_depart = d;
     }
@@ -513,14 +517,57 @@ function get_mini_even(depart) {
 
 
 function random_sort_must_depart(student, si) {
+  // var departs = must_transfer_department.slice();
+
+  // // 排除学生所在科室
+  // var ex_depart = student_depart[name];
+  // var ex_index = departs.indexOf(ex_depart);
+  // var other_departs = ['老年病', '肿瘤', '血液科'].filter(function(item) { return item !== ex_depart });
+
+  // if (ex_index > -1) {
+  //   departs.splice(ex_index, 1, other_departs[0]);
+  // }
+
+  // departs.sort(function(a, b) { return Math.random() > 0.5 ? 1 : -1 });
+
+  // // 将8月分的排在第一位
+  // var section_8 = get_8_section(name);
+  // var depart_8 = get_depart_name(section_8);
+  // var index_8 = departs.indexOf(depart_8);
+  // // 非必转科室，默认为 内分泌或肾病
+  // if (index_8 < 0) {
+  //   index_8 = departs.indexOf('内分泌');
+  //   if (index_8 < 0) {
+  //     index_8 = departs.indexOf('肾病');
+  //   }
+  // }
+  // var tmp = departs[index_8];
+  // departs[index_8] = departs[0];
+  // departs[0] = tmp;
+
+  // if (is_torget) {
+  //   togeter_students_tmp[torget_index] = departs.slice();
+  // }
+
+  // 均匀科室学生数量
+  // for (var i = 1; i < random_sections.length; i++) {
+  //   var cur_section = random_sections[i];
+
+  //   if (is_section_student_count_over(cur_section, i)) {
+  //     var new_section = get_less_student_count_section(i);
+  //     var ns_index = random_sections.indexOf(new_section);
+
+  //     if (ns_index > -1) {
+  //       var tmp = random_sections[ns_index];
+
+  //       random_sections[ns_index] = random_sections[i];
+  //       random_sections[i] = tmp;
+  //     }
+  //   }
+  // }
+
   var name = student.name;
   var is_torget = false;
-  var section_8 = get_8_section(name);
-  var depart_8 = get_depart_name(section_8);
-
-  if (must_transfer_department.indexOf(depart_8) < 0) {
-    depart_8 = '内分泌';
-  }
 
   // 是否在一起得学员
   var torget_index = togeter_students_index[name];
@@ -532,14 +579,7 @@ function random_sort_must_depart(student, si) {
   var torget_tmp = togeter_students_tmp[torget_index];
 
   if (torget_tmp) {
-    var first_depart = torget_tmp[0];
-    if (first_depart !== depart_8) {
-      var f_index = torget_tmp.indexOf(depart_8);
-      torget_tmp[f_index] = first_depart;
-      torget_tmp[0] = depart_8;
-    }
-
-    for (var i = 1; i < torget_tmp.length; i++) {
+    for (var i = 0; i < torget_tmp.length; i++) {
       add_student_in_depart(i, torget_tmp[i]);
     }
 
@@ -548,13 +588,14 @@ function random_sort_must_depart(student, si) {
 
   var departs = [];
 
-  departs[0] = depart_8;
-
-  for (var i = 1; i < 8; i++) {
-    var index = (si + i + 4) % 7 + 1;
-    var less_depart = get_less_student_count_depart(index, departs, si);
+  for (var i = 0; i < 8; i++) {
+    var index = (si + i + 4) % 8;
+    var less_depart = get_less_student_count_depart(index, departs, si, index);
 
     if (departs.indexOf(less_depart) > -1) {
+      console.dir(departs);
+      console.log(index, less_depart);
+      console.dir(depart_tmp, {depth: 10});
       throw Error('查询最小depart重复');
     }
 
@@ -562,11 +603,39 @@ function random_sort_must_depart(student, si) {
     add_student_in_depart(index, less_depart);
   }
 
-  if (is_torget) {
-    togeter_students_tmp[torget_index] = departs.slice();
+  for (var i = 0; i < departs.length; i++) {
+    var is_even = i % 2 == 0;
+    var d = departs[i];
+
+    if (two_mouths_depart.indexOf(d) > -1) {
+      if (!is_even) {
+        var pi = get_mini_even(d);
+        jian_student_in_depart(pi, departs[pi]);
+        add_student_in_depart(pi, departs[i]);
+        jian_student_in_depart(i, departs[i]);
+        add_student_in_depart(i, departs[pi]);
+        var tmp = departs[i];
+        departs[i] = departs[pi];
+        departs[pi] = tmp;
+        
+      }
+    }
   }
 
-  return departs;
+  var random_sections = departs;
+
+  console.dir(departs)
+  // console.dir(random_sections)
+
+  // for (var i = 0; i < random_sections.length; i++) {
+  //   add_student_in_depart(i, random_sections[i]);
+  // }
+
+  if (is_torget) {
+    togeter_students_tmp[torget_index] = random_sections.slice();
+  }
+
+  return random_sections;
 }
 
 // 按照学生，排病区
@@ -577,23 +646,23 @@ function random_sort_must_depart(student, si) {
 
     console.log('开始排' + s_name + '的班');
 
-    var random_sections = random_sort_must_depart(student, si);
+    var random_depart = random_sort_must_depart(student, si);
 
     // 将两个月的拉长
-    for (var i = 0; i < two_mouths_depart.length; i++) {
-      var tm_depart = two_mouths_depart[i];
-      var tm_index = random_sections.indexOf(tm_depart);
+  for (var i = 0; i < two_mouths_depart.length; i++) {
+    var tm_depart = two_mouths_depart[i];
+    var tm_index = random_depart.indexOf(tm_depart);
 
-      if (tm_index > -1) {
-        random_sections.splice(tm_index, 0, tm_depart);
-      }
+    if (tm_index > -1) {
+      random_depart.splice(tm_index, 0, tm_depart);
     }
+  }
 
-    student.sections.push(...random_sections);
+    student.sections.push(...random_depart);
     console.dir(student.sections);
 
-    for (var mi = 0; mi < random_sections.length; mi++) {
-      var cur_section = random_sections[mi];
+    for (var mi = 0; mi < random_depart.length; mi++) {
+      var cur_section = random_depart[mi];
       var cur_section_student = depart_students[mi];
 
       cur_section_student[cur_section].push(s_name);

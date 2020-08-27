@@ -25,6 +25,7 @@
     }
   </style>
   <script src="./index.js"></script>
+  <script src="./student_info.js"></script>
 </head>
 <body>
   <div id="app">
@@ -39,13 +40,19 @@
   <script>
     (function() {
       function createTable(items, mouth) {
+        items.sort(function(a, b) { return a['depart'] > b['depart'] ? 1 : -1 });
         var trStr = '';
         for (var i = 0; i < items.length; i++) {
           var item = items[i];
+          var detail = students_detail[item['name']];
           trStr += `
           <tr>
+            <td>${detail['phone']}</td>
             <td>${item['name']}</td>
+            <td>${detail['sex']}</td>
             <td>${item['depart']}</td>
+            <td>${detail['nianji']}</td>
+            <td>${detail['ban']}</td>
           </tr>
           `;
         }
@@ -54,8 +61,12 @@
         <div>第${mouth}个月</div>
         <table border="1" cellspacing="0">
           <tr>
+            <th>用户名</th>
             <th>姓名</th>
-            <th>科室</th>
+            <th>性别</th>
+            <th>院系/科室</th>
+            <th>年级</th>
+            <th>班级</th>
           </tr>
           ${trStr}
         </table>`
