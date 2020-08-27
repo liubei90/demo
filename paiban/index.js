@@ -26,12 +26,19 @@ var department_sections = {
   '老年病': ['老年病'],
 }
 
+function get_random_section_in_depart(depart) {
+  var sections = department_sections[depart];
+  var index = Math.floor(Math.random() * sections.length);
+
+  return sections[index];
+}
+
+var department_sections_keys = Object.keys(department_sections);
+
 var transfer_section_arr = [];
 var transfer_section_info = {};
 
 (function() {
-  var department_sections_keys = Object.keys(department_sections);
-  
   for (var i = 0; i < department_sections_keys.length; i++) {
     var depart = department_sections_keys[i];
     var sectionlist = department_sections[depart];
@@ -74,11 +81,11 @@ var transfer_section_info = {};
 console.dir(transfer_section_arr);
 console.dir(transfer_section_info, { depth: 10 });
 
-function is_must_department(section) {
+function is_must_section(section) {
   return transfer_section_info[section].is_must;
 }
 
-function is_select_department(section) {
+function is_select_section(section) {
   return transfer_section_info[section].is_select;
 }
 
@@ -86,6 +93,20 @@ function get_must_mouth(section) {
   return transfer_section_info[section].must_mouth;
 }
 
+function get_depart_name(section) {
+  return transfer_section_info[section].depart;
+}
+
+function is_must_department(depart) {
+  return must_transfer_department.indexOf(depart) > -1;
+}
+
+function is_select_department(depart) {
+  return select_transfer_department.indexOf(depart) > -1;
+}
+
+
+var students = ["成家宏","邢玉凤","马瑞红","侯学文","朱丹娜","崔艳粉","张创业","孟六阳","张迪","潘海涛","赵永华","张超","刘建申","莫万灵","胡颖","贺群慧","王露","段启","代云","王棣丞","任闪闪","李锋森","范莹莹","李登科","介睿峥","苏珊珊","邱月清","李英宵","樊亚芳","李治兵","李习婉","王若凡","李倩倩","任娟","张鑫丽","袁成凤","郑璐璐","娄方敏","叶子","王红艳","张亚乐","黄爱娟","任宗浩","吉兰洁","李颖","张静晓","袁帆","侯露阳","张璐鹏","张开波","康研","李方方","邵帅","陈梦利"];
 
 var students_wish = {
   "张超": ["内分泌","肾病","血液科","肿瘤"],
@@ -201,7 +222,11 @@ var results_8 = {
   "陈梦利": ["老年病"],
 }
 
-var students = ["成家宏","邢玉凤","马瑞红","侯学文","朱丹娜","崔艳粉","张创业","孟六阳","张迪","潘海涛","赵永华","张超","刘建申","莫万灵","胡颖","贺群慧","王露","段启","代云","王棣丞","任闪闪","李锋森","范莹莹","李登科","介睿峥","苏珊珊","邱月清","李英宵","樊亚芳","李治兵","李习婉","王若凡","李倩倩","任娟","张鑫丽","袁成凤","郑璐璐","娄方敏","叶子","王红艳","张亚乐","黄爱娟","任宗浩","吉兰洁","李颖","张静晓","袁帆","侯露阳","张璐鹏","张开波","康研","李方方","邵帅","陈梦利"];
+
+function get_8_section(student) {
+  return results_8[student][0];
+}
+
 
 var students_info = {};
 
@@ -209,7 +234,8 @@ var students_info = {};
   for (var i = 0; i < students.length; i++) {
     students_info[students[i]] = {
       name: students[i],
-      sections: [...results_8[students[i]]],
+      // sections: [...results_8[students[i]]],
+      sections: [],
       wishs: students_wish[students[i]],
     }
   }
@@ -240,14 +266,14 @@ function get_sections_count(student) {
 
 function get_student_must_count(student) {
   var sections = student.sections;
-  var musts = sections.filter(function(item) { return is_must_department(item); });
+  var musts = sections.filter(function(item) { return is_must_section(item); });
 
   return musts.length;
 }
 
 function get_student_select_count(student) {
   var sections = student.sections;
-  var selects = sections.filter(function(item) { return is_select_department(item); });
+  var selects = sections.filter(function(item) { return is_select_section(item); });
 
   return selects.length;
 }
@@ -275,6 +301,7 @@ var mouth_count = 10;
 // var mouth_count = 2;
 // 科室已排人员
 var section_students = [];
+var depart_students = [];
 
 function new_section_students() {
   var res = {};
@@ -285,26 +312,48 @@ function new_section_students() {
   return res;
 }
 
+function new_depart_students() {
+  var res = {};
+
+  for (var i = 0; i < department_sections_keys.length; i++) {
+    res[department_sections_keys[i]] = [];
+  }
+
+  return res;
+}
+
 (function() {
   for (var i = 0; i < mouth_count; i++) {
     section_students[i] = new_section_students();
   }
 
-  var first_section_students = section_students[0];
-  var keys = Object.keys(results_8);
-
-  for (var i = 0; i < keys.length; i++) {
-    var sections = results_8[keys[i]];
-    first_section_students[sections[0]].push(keys[i]);
+  for (var i = 0; i < mouth_count; i++) {
+    depart_students[i] = new_depart_students();
   }
+
+  // var first_section_students = section_students[0];
+  // var first_depart_students = depart_students[0];
+  // var keys = Object.keys(results_8);
+
+  // for (var i = 0; i < keys.length; i++) {
+  //   var student = keys[i];
+  //   var section = results_8[student][0];
+  //   var depart = get_depart_name(section);
+
+  //   first_section_students[section].push(student);
+  //   first_depart_students[depart].push(student);
+  // }
+
 })();
 
 console.dir(section_students);
+console.dir(depart_students);
 
 // 平均每个科室可以排多少个同学
 var avg_students_count = Math.floor(students.length / transfer_section_arr.length);
 
 // 一次排9个月的班
+// 按照病区，排学生
 (function() {
   var current_section = null;
   var current_mouth = null;
@@ -329,12 +378,79 @@ var avg_students_count = Math.floor(students.length / transfer_section_arr.lengt
       console.log('科室' + current_section + '排了' + plain_count + '人');
     }
   }
+}); //();
+
+
+function random_sort_must_depart() {
+  var departs = must_transfer_department.slice();
+  var must_lenght = departs.length;
+
+  for (var i = 0; i < mouth_count - must_lenght; i++) {
+    departs.push('老年病');
+  }
+
+  departs.sort(function(a, b) { return Math.random() > 0.5 ? 1 : -1 });
+  return departs;
+}
+
+// 按照学生，排病区
+(function() {
+  for (var si = 0; si < students.length; si++) {
+    var s_name = students[si];
+    var student = students_info[s_name];
+
+    console.log('开始排' + s_name + '的班');
+
+    var random_departs = random_sort_must_depart(student);
+
+    // 将8月分的排在第一为
+    var section_8 = get_8_section(s_name);
+    var depart_8 = get_depart_name(section_8);
+    var index_8 = random_departs.indexOf(depart_8);
+    // 非必转科室，默认为 老年病
+    if (index_8 < 0) {
+      index_8 = random_departs.indexOf('老年病');
+    }
+    var tmp = random_departs[index_8];
+    random_departs[index_8] = random_departs[0];
+    random_departs[0] = tmp;
+
+    var random_sections = [];
+
+    for (var i = 0; i < random_departs.length; i++) {
+
+      if (i === 0) {
+        random_sections.push(section_8);
+      } else {
+        random_sections.push(get_random_section_in_depart(random_departs[i]));
+      }
+    }
+
+    student.sections.push(...random_sections);
+
+    console.dir(random_departs);
+    console.dir(random_sections);
+
+    for (var mi = 0; mi < mouth_count; mi++) {
+      var cur_depart = random_departs[mi];
+      var cur_section = random_sections[mi];
+      var cur_depart_student = depart_students[mi];
+      var cur_section_student = section_students[mi];
+
+      console.log(cur_depart);
+      console.dir(cur_depart_student[cur_depart]);
+      console.log(cur_section);
+      console.dir(cur_section_student[cur_section]);
+      cur_depart_student[cur_depart].push(s_name);
+      cur_section_student[cur_section].push(s_name);
+    }
+  }
 })();
 
 
-
-console.dir(students_info, { depth: 10 })
-console.dir(section_students, { depth: 10 })
+console.dir(students_info, { depth: 10 });
+console.dir(depart_students, { depth: 10 });
+console.dir(section_students, { depth: 10 });
 
 console.log('avg_students_count: ', avg_students_count);
 
@@ -356,9 +472,9 @@ function plain_section(mouth, section_index, section, student) {
   // 当前科室已选人数
   var current_count = current_section.length;
   // 当前科室是否必转
-  var is_must = is_must_department(section);
+  var is_must = is_must_section(section);
   // 当前科室是否选转
-  var is_select = is_select_department(section);
+  var is_select = is_select_section(section);
   // 当前科室需要待的月数
   var must_mouth_count = get_must_mouth(section);
 
