@@ -1,8 +1,12 @@
-var must_transfer_department = ['急诊', '心病科', 'ICU', '肝胆脾胃病科', '肺病科', '脑病科', '肾病', '内分泌'];
+var must_transfer_department = ['心病科', 'ICU', '肝胆脾胃病科', '肺病科', '脑病科', '肾病', '内分泌', '急诊'];
 var select_transfer_department = ['老年病'];
 // var must_transfer_department = ['急诊', '心病科', 'ICU', '肝胆脾胃病科', '肺病科', '脑病科'];
 // var select_transfer_department = ['肾病', '内分泌', '老年病', '肿瘤', '血液科'];
 
+var must_transfer_section = ['急诊', '心病一区', '心病二区', 'ICU', '肝胆脾胃一区', '肝胆脾胃二区', '肝胆脾胃三区', '肺病科', '脑病一区', '脑病二区', '脑病三区', '肾病', '内分泌'];
+
+var two_mouths_depart = ['急诊', '心病科'];
+var two_mouths_section = ['急诊', '心病一区', '心病二区'];
 var must_transfer_department_mouths = {
   '急诊': 2, 
   '心病科': 2, 
@@ -16,7 +20,7 @@ var department_sections = {
   '心病科': ['心病一区', '心病二区'],
   '脑病科': ['脑病一区', '脑病二区', '脑病三区'],
   '肝胆脾胃病科': ['肝胆脾胃一区', '肝胆脾胃二区', '肝胆脾胃三区'],
-  '肺病科': ['肺病'],
+  '肺病科': ['肺病科'],
   '急诊': ['急诊'],
   'ICU': ['ICU'],
   '肾病': ['肾病'],
@@ -78,8 +82,8 @@ var transfer_section_info = {};
   }
 })();
 
-console.dir(transfer_section_arr);
-console.dir(transfer_section_info, { depth: 10 });
+// console.dir(transfer_section_arr);
+// console.dir(transfer_section_info, { depth: 10 });
 
 function is_must_section(section) {
   return transfer_section_info[section].is_must;
@@ -165,6 +169,63 @@ var students_wish = {
   "段启": ["老年病","肾病","内分泌"],
 }
 
+var student_depart = {
+  "张超": "心病科",
+  "王棣丞": "心病科",
+  "邱月清": "心病科",
+  "潘海涛": "心病科",
+  "刘建申": "心病科",
+  "李治兵": "心病科",
+  "李习婉": "心病科",
+  "郑璐璐": "肝胆脾胃病科",
+  "赵永华": "肝胆脾胃病科",
+  "张鑫丽": "肝胆脾胃病科",
+  "张璐鹏": "肝胆脾胃病科",
+  "张开波": "肝胆脾胃病科",
+  "王露": "肝胆脾胃病科",
+  "莫万灵": "肝胆脾胃病科",
+  "娄方敏": "肝胆脾胃病科",
+  "李英宵": "肝胆脾胃病科",
+  "李倩倩": "肝胆脾胃病科",
+  "贺群慧": "心病科",
+  "樊亚芳": "肝胆脾胃病科",
+  "胡颖": "血液科",
+  "黄爱娟": "内分泌",
+  "崔艳粉": "脑病科",
+  "张亚乐": "内分泌",
+  "任宗浩": "内分泌",
+  "吉兰洁": "内分泌",
+  "张迪": "心病科",
+  "邢玉凤": "肾病",
+  "张创业": "脑病科",
+  "任闪闪": "脑病科",
+  "马瑞红": "脑病科",
+  "李锋森": "老年病",
+  "侯露阳": "脑病科",
+  "范莹莹": "脑病科",
+  "代云": "脑病科",
+  "成家宏": "老年病",
+  "袁帆": "肿瘤",
+  "袁成凤": "肿瘤",
+  "叶子": "肿瘤",
+  "王若凡": "肿瘤",
+  "王红艳": "肿瘤",
+  "苏珊珊": "肿瘤",
+  "邵帅": "肿瘤",
+  "任娟": "肿瘤",
+  "李颖": "脑病科",
+  "李登科": "肿瘤",
+  "康研": "肿瘤",
+  "介睿峥": "肿瘤",
+  "陈梦利": "肿瘤",
+  "侯学文": "肺病科",
+  "李方方": "脑病科",
+  "孟六阳": "脑病科",
+  "张静晓": "肝胆脾胃病科",
+  "朱丹娜": "肺病科",
+  "段启": "肿瘤"
+}
+
 var results_8 = {
   "成家宏": ["心病一区"],
   "邢玉凤": ["心病一区"],
@@ -190,11 +251,11 @@ var results_8 = {
   "李锋森": ["肝胆脾胃三区"],
   "范莹莹": ["肝胆脾胃三区"],
   "李登科": ["肝胆脾胃三区"],
-  "介睿峥": ["肺病"],
-  "苏珊珊": ["肺病"],
-  "邱月清": ["肺病"],
-  "李英宵": ["肺病"],
-  "樊亚芳": ["肺病"],
+  "介睿峥": ["肺病科"],
+  "苏珊珊": ["肺病科"],
+  "邱月清": ["肺病科"],
+  "李英宵": ["肺病科"],
+  "樊亚芳": ["肺病科"],
   "李治兵": ["急诊"],
   "李习婉": ["急诊"],
   "王若凡": ["急诊"],
@@ -346,51 +407,194 @@ function new_depart_students() {
 
 })();
 
-console.dir(section_students);
-console.dir(depart_students);
-
-// 平均每个科室可以排多少个同学
-var avg_students_count = Math.floor(students.length / transfer_section_arr.length);
 
 // 一次排9个月的班
-// 按照病区，排学生
+var togeter_students = [
+  ['任宗浩', '张开波', '李治兵','张璐鹏'],
+  ['陈梦利', '邵帅'],
+  ['康研','李方方']
+];
+
+var togeter_students_index = {
+  '任宗浩': 0, 
+  '张开波': 0, 
+  '李治兵': 0,
+  '张璐鹏': 0,
+  '陈梦利': 1, 
+  '邵帅': 1,
+  '康研': 2,
+  '李方方': 2,
+}
+
+var togeter_students_tmp = [];
+
+// 7个月
+var depart_tmp = [null];
+
+function new_depart_count() {
+  var res = {};
+
+  for(var i = 0; i < must_transfer_department.length; i++) {
+    res[must_transfer_department[i]] = 0;
+  }
+
+  return res;
+}
+
 (function() {
-  var current_section = null;
-  var current_mouth = null;
-  for (var i = 1; i < mouth_count; i++) {
-    current_mouth = i;
-    console.log('开始排第个' + current_mouth + '月的班');
+  for (var i = 1; i < 8; i++) {
+    depart_tmp[i] = new_depart_count();
+  }
+})();
 
-    for (var j = 0; j < transfer_section_arr.length; j++) {
-      current_section = transfer_section_arr[j];
-      // console.log('开始排科室' + current_section + '的班');
-      // var random_students = students.slice();
-      // random_students.sort();
-      // 当前科室索引
-      // 已排学生数量
+var depart_score = {
+  '急诊': 7, 
+  '心病科': 3, 
+  'ICU': 6, 
+  '肝胆脾胃病科': 2, 
+  '肺病科': 6, 
+  '脑病科': 2, 
+  '肾病': 3, 
+  '内分泌': 1
+}
 
-      var plain_count = 0;
-      for (var s = 0; s < students.length; s++) {
-        if (plain_section(current_mouth, j, current_section, students_info[students[s]])) {
-          plain_count += 1;
-        }
-      }
-      console.log('科室' + current_section + '排了' + plain_count + '人');
+function add_student_in_depart(mouth, depart) {
+  var mouth_depart = depart_tmp[mouth];
+  mouth_depart[depart] += depart_score[depart];
+}
+
+function get_less_student_count_depart(mouth, exclude_depart, si) {
+  var mouth_depart = depart_tmp[mouth];
+  var departs = Object.keys(mouth_depart);
+  // 随机
+  // departs.sort(() => {return Math.random() > 0.5 ? 1 : -1});
+  var min_depart_count = 1000;
+  var min_depart = null;
+
+  for(var i = 0; i < departs.length; i++) {
+    var index = (si + i + 1) % departs.length;
+    var d = departs[index];
+    if (exclude_depart.indexOf(d) > -1) {
+      continue;
+    }
+
+    if (mouth_depart[d] < min_depart_count) {
+      min_depart_count = mouth_depart[d];
+      min_depart = d;
     }
   }
-}); //();
+
+  return min_depart;
+}
 
 
-function random_sort_must_depart() {
-  var departs = must_transfer_department.slice();
-  var must_lenght = departs.length;
+function random_sort_must_depart(student, si) {
+  var name = student.name;
+  var is_torget = false;
 
-  for (var i = 0; i < mouth_count - must_lenght; i++) {
-    departs.push('老年病');
+  // // 是否在一起得学员
+  // var torget_index = togeter_students_index[name];
+
+  // if (torget_index !== undefined) {
+  //   is_torget = true;
+  // }
+
+  // var torget_tmp = togeter_students_tmp[torget_index];
+
+  // if (torget_tmp) {
+  //   return torget_tmp.slice();
+  // }
+
+  // var departs = must_transfer_department.slice();
+
+  // // 排除学生所在科室
+  // var ex_depart = student_depart[name];
+  // var ex_index = departs.indexOf(ex_depart);
+  // var other_departs = ['老年病', '肿瘤', '血液科'].filter(function(item) { return item !== ex_depart });
+
+  // if (ex_index > -1) {
+  //   departs.splice(ex_index, 1, other_departs[0]);
+  // }
+
+  // departs.sort(function(a, b) { return Math.random() > 0.5 ? 1 : -1 });
+
+  // // 将8月分的排在第一位
+  // var section_8 = get_8_section(name);
+  // var depart_8 = get_depart_name(section_8);
+  // var index_8 = departs.indexOf(depart_8);
+  // // 非必转科室，默认为 内分泌或肾病
+  // if (index_8 < 0) {
+  //   index_8 = departs.indexOf('内分泌');
+  //   if (index_8 < 0) {
+  //     index_8 = departs.indexOf('肾病');
+  //   }
+  // }
+  // var tmp = departs[index_8];
+  // departs[index_8] = departs[0];
+  // departs[0] = tmp;
+
+  // if (is_torget) {
+  //   togeter_students_tmp[torget_index] = departs.slice();
+  // }
+
+  // 均匀科室学生数量
+  // for (var i = 1; i < random_sections.length; i++) {
+  //   var cur_section = random_sections[i];
+
+  //   if (is_section_student_count_over(cur_section, i)) {
+  //     var new_section = get_less_student_count_section(i);
+  //     var ns_index = random_sections.indexOf(new_section);
+
+  //     if (ns_index > -1) {
+  //       var tmp = random_sections[ns_index];
+
+  //       random_sections[ns_index] = random_sections[i];
+  //       random_sections[i] = tmp;
+  //     }
+  //   }
+  // }
+
+  var departs = [];
+  var section_8 = get_8_section(name);
+  var depart_8 = get_depart_name(section_8);
+
+  // if (depart_8 != '内分泌' && depart_8 != '肾病' && ) {
+  if (must_transfer_department.indexOf(depart_8) < 0) {
+    departs[0] = '内分泌';
+  } else {
+    departs[0] = depart_8;
   }
 
-  departs.sort(function(a, b) { return Math.random() > 0.5 ? 1 : -1 });
-  return departs;
+  for (var i = 1; i < 8; i++) {
+    var index = (si + i) % 7 + 1;
+    var less_depart = get_less_student_count_depart(index, departs, si);
+    // var less_depart = get_less_student_count_depart(i, departs);
+
+    if (departs.indexOf(less_depart) > -1) {
+      console.dir(departs);
+      console.log(index, less_depart);
+      console.dir(depart_tmp, {depth: 10});
+      throw Error('查询最小depart重复');
+    }
+
+    departs[index] = less_depart;
+    add_student_in_depart(index, less_depart);
+  }
+
+  var random_sections = [];
+
+  for (var i = 0; i < departs.length; i++) {
+    if (i == 0 && must_transfer_department_mouths[depart_8] == 2) {
+      random_sections[i] = section_8;
+    } else {
+      random_sections.push(get_random_section_in_depart(departs[i]));
+    }
+  }
+
+  console.dir(departs)
+  console.dir(random_sections)
+
+  return random_sections;
 }
 
 // 按照学生，排病区
@@ -401,58 +605,38 @@ function random_sort_must_depart() {
 
     console.log('开始排' + s_name + '的班');
 
-    var random_departs = random_sort_must_depart(student);
+    var random_sections = random_sort_must_depart(student, si);
 
-    // 将8月分的排在第一为
-    var section_8 = get_8_section(s_name);
-    var depart_8 = get_depart_name(section_8);
-    var index_8 = random_departs.indexOf(depart_8);
-    // 非必转科室，默认为 老年病
-    if (index_8 < 0) {
-      index_8 = random_departs.indexOf('老年病');
-    }
-    var tmp = random_departs[index_8];
-    random_departs[index_8] = random_departs[0];
-    random_departs[0] = tmp;
+    // 将两个月的拉长
+    for (var i = 0; i < two_mouths_section.length; i++) {
+      var tm_depart = two_mouths_section[i];
+      var tm_index = random_sections.indexOf(tm_depart);
 
-    var random_sections = [];
-
-    for (var i = 0; i < random_departs.length; i++) {
-
-      if (i === 0) {
-        random_sections.push(section_8);
-      } else {
-        random_sections.push(get_random_section_in_depart(random_departs[i]));
+      if (tm_index > -1) {
+        random_sections.splice(tm_index, 0, tm_depart);
       }
     }
 
     student.sections.push(...random_sections);
-
-    console.dir(random_departs);
-    console.dir(random_sections);
+    console.dir(student.sections);
 
     for (var mi = 0; mi < mouth_count; mi++) {
-      var cur_depart = random_departs[mi];
       var cur_section = random_sections[mi];
-      var cur_depart_student = depart_students[mi];
       var cur_section_student = section_students[mi];
 
-      console.log(cur_depart);
-      console.dir(cur_depart_student[cur_depart]);
-      console.log(cur_section);
-      console.dir(cur_section_student[cur_section]);
-      cur_depart_student[cur_depart].push(s_name);
       cur_section_student[cur_section].push(s_name);
     }
   }
 })();
 
 
-console.dir(students_info, { depth: 10 });
-console.dir(depart_students, { depth: 10 });
+// console.dir(students_info, { depth: 10 });
+// console.dir(depart_students, { depth: 10 });
 console.dir(section_students, { depth: 10 });
+console.dir(depart_tmp, { depth: 10 });
 
-console.log('avg_students_count: ', avg_students_count);
+
+// console.log('avg_students_count: ', avg_students_count);
 
 function plain_section(mouth, section_index, section, student) {
   // console.log(mouth, section);
