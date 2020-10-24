@@ -8,9 +8,11 @@ class IndexHandler(web.RequestHandler):
 
 
 class SttHandler(web.RequestHandler):
-    async def post(self):
-        with open(f'./pcm_{time.time()}', mode='rb', encoding='utf8') as f:
+    def post(self):
+        with open(f'./pcm_{time.time()}', mode='wb+') as f:
             f.write(self.request.body)
+
+        return self.write({ 'data': '这是测试数据' })
 
 
 def create_app():
@@ -19,7 +21,7 @@ def create_app():
         (r'/index', IndexHandler),
         (r'/stt', SttHandler),
     ])
-    app.listen(8100)
+    app.listen(8001)
 
 
 if __name__ == "__main__":
