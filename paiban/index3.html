@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    td {
+      padding: 10px;
+    }
+
+    .mouth-content {
+      margin: 20px 10px;
+    }
+    .mouth-content td {
+      white-space: nowrap;
+    }
+
+
+    .section-content {
+      margin: 20px 10px;
+    }
+    .section-content td {
+      white-space: nowrap;
+    }
+  </style>
+    <script src="./depart_info.js"></script>
+    <script src="./student_info.js"></script>
+    <script src="./index4.js"></script>
+  <script src="./result1.js"></script>
+  <script src="./student_info.js"></script>
+</head>
+<body>
+  <div id="app">
+    
+  </div>
+
+  <div class="section-content">
+    <div>科室按月排班</div>
+    <div id="section"></div>
+  </div>
+
+  <script>
+    (function() {
+      function createTable(items, mouth) {
+        items.sort(function(a, b) { return a['depart'] > b['depart'] ? 1 : -1 });
+        var trStr = '';
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          var detail = students_detail[item['name']];
+          trStr += `
+          <tr>
+            <td>${detail['phone']}</td>
+            <td>${item['name']}</td>
+            <td>${detail['sex']}</td>
+            <td>${item['depart']}</td>
+            <td>${detail['nianji']}</td>
+            <td>${detail['ban']}</td>
+          </tr>
+          `;
+        }
+
+        var t = `
+        <div>第${mouth}个月</div>
+        <table border="1" cellspacing="0">
+          <tr>
+            <th>用户名</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>院系/科室</th>
+            <th>年级</th>
+            <th>班级</th>
+          </tr>
+          ${trStr}
+        </table>`
+
+        var d = document.createElement('div');
+        d.classList.add('mouth-content');
+        d.innerHTML = t;
+
+        return d;
+      }
+
+      var tableData = [];
+      for (var i = 0; i < 10; i++) {
+        tableData[i] = [];
+        var keys = Object.keys(min_student);
+        for (var si = 0; si < keys.length; si++ ) {
+          var cur_stu = min_student[keys[si]];
+          var name = cur_stu['name'];
+          var item = {
+            name: name,
+            depart: cur_stu['result'][i],
+          }
+          tableData[i].push(item);
+        }
+      }
+
+      var app = document.querySelector('#app');
+
+      for (var i = 0; i < tableData.length; i++) {
+        app.append(createTable(tableData[i], i+1));
+      }
+    })();
+
+  </script>
+
+  <script>
+    (function() {
+      function createTR(item) {
+        var mouths = item.mouths;
+        var section = item.section;
+        var tdStr = '';
+        var total = 0;
+
+        for (var i = 0; i < 10; i++) {
+          tdStr += `<td>${mouths[i] ? mouths[i].length : 0}</td>`
+          total += mouths[i] ? mouths[i].length : 0;
+        }
+
+        return `
+        <tr>
+            <td>${section}</td>
+            ${tdStr}
+            <td>${total}</td>
+          </tr>
+        `;
+      }
+
+      var sections = {};
+      var mouth_count = [];
+      var keys = Object.keys(min_student);
+
+      for (var j = 0; j < keys.length; j++) {
+        for (var i = 0; i < 10; i++) {
+          var dep = min_student[keys[j]]['result'][i];
+
+          if (!sections[dep]) {
+            sections[dep] = [];
+          }
+
+          if (!sections[dep][i]) {
+            sections[dep][i] = [];
+          }
+
+          sections[dep][i].push(keys[j]);
+
+          if (!mouth_count[i]) {
+            mouth_count[i] = 0;
+          }
+
+          mouth_count[i]++;
+        }
+      }
+
+      var trStr = '';
+      var keys = Object.keys(sections);
+
+      for (var i = 0; i < keys.length; i++) {
+        trStr += createTR({
+          section: keys[i],
+          mouths: sections[keys[i]],
+        })
+      }
+
+      console.dir(sections);
+
+      var totalStr = '';
+
+      for (var i = 0; i < mouth_count.length; i++) {
+        totalStr += '<td>' + mouth_count[i] + '</td>'
+      }
+
+      var t = `
+        <table border="1" cellspacing="0">
+          <tr>
+            <th>科室</th>
+            <th>第一月</th>
+            <th>第二月</th>
+            <th>第三月</th>
+            <th>第四月</th>
+            <th>第五月</th>
+            <th>第六月</th>
+            <th>第七月</th>
+            <th>第八月</th>
+            <th>第九月</th>
+            <th>第十月</th>
+            <th>总数</th>
+          </tr>
+          ${trStr}
+          <tr>
+            <td>总数</td>
+            ${totalStr}
+          </tr>
+        </table>`
+
+        var d = document.querySelector('#section');
+        d.innerHTML = t;
+    })();
+  </script>
+</body>
+</html>
