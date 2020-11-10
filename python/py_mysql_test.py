@@ -12,6 +12,8 @@ config = {
 }
 
 if __name__ == "__main__":
-    con = mysql.connector.connect()
+    con = mysql.connector.connect(**config)
     cur = con.cursor(dictionary=True)
-    cur.execute('select sleep(12)')
+    cur.execute('select 1')
+    res = cur.fetchall()
+    print res

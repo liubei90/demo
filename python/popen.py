@@ -1,4 +1,6 @@
 import subprocess
+import sys
+import io
 
 
 def main():
@@ -16,5 +18,18 @@ def main2():
     print('222')
 
 
+def main3():
+    errio = io.StringIO()
+    subprocess.run('python raiseerr.py', shell=True, stderr=errio, stdout=errio)
+    print('111', errio.getvalue())
+    # try:
+    #     errio = io.StringIO()
+    #     subprocess.run('python raiseerr.py', shell=True, stderr=errio, stdout=errio)
+    #     print('111', errio.getvalue())
+    # except Exception as e:
+    #     print('i'*12)
+    #     print(sys.exc_info())
+
 if __name__ == "__main__":
-    main2()
+    print(sys.argv)
+    main3()

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css?family=Anton");
+    body {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+    }
+    .collection {
+        font-family: "Anton", Sans-serif;
+        color: #333333;
+        display: inline-block;
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        font-size: 18px;
+        text-decoration: none;
+        text-align: center;
+        line-height: 0.9;
+    }
+    .collection::first-line {
+        color: crimson;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+    .artboard {
+        width: 340px;
+        height: 340px;
+        border: 20px solid #333;
+        box-shadow: 0 2px 15px 5px rgba(51, 51, 51, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <canvas class='artboard' id='canvas'></canvas>
+  <script>
+
+var canvas = document.getElementById("canvas"),
+    ctx = canvas.getContext("2d"),
+    w = canvas.width = 340,
+    h = canvas.height = 340;
+
+var theta = 0,
+    amplitude = 65,
+    period = 200,
+    dx = null,
+    size = 8,
+    yValues = [],
+    timing = void 0,
+    strokeWidth = 3;
+
+function setup() {
+    // assume the device pixel ratio is 1 if the browser doesn't specify it
+    var devicePixelRatio = window.devicePixelRatio || 1;
+
+    // determine the 'backing store ratio' of the canvas context
+    var backingStoreRatio =
+        ctx.webkitBackingStorePixelRatio ||
+        ctx.mozBackingStorePixelRatio ||
+        ctx.msBackingStorePixelRatio ||
+        ctx.oBackingStorePixelRatio ||
+        ctx.backingStorePixelRatio || 1;
+
+
+    // determine the actual ratio we want to draw at
+    var ratio = devicePixelRatio / backingStoreRatio;
+
+    if (devicePixelRatio !== backingStoreRatio) {
+        // set the 'real' canvas size to the higher width/height
+        canvas.width = w * ratio;
+        canvas.height = h * ratio;
+
+        // ...then scale it back down with CSS
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+    } else {
+        // this is a normal 1:1 device; just scale it simply
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = '';
+        canvas.style.height = '';
+    }
+    // scale the drawing context so everything will work at the higher ratio
+    ctx.scale(ratio, ratio);
+
+    // Create lines 
+    dx = Math.PI * 2 / period * size;
+    for (x = 0; x < Math.round(w / size) + 3; x++) {
+        yValues.push(x);
+    }
+    draw();
+}
+
+function draw() {
+    calcWave();
+    renderWave();
+    timing = requestAnimationFrame(draw);
+}
+
+function calcWave() {
+    ctx.clearRect(0, 0, 340, 340);
+    theta += 0.02;
+    var x = theta;
+
+    for (i = 0; i < yValues.length; i++) {
+        yValues[i] = Math.sin(x) * amplitude;
+        x += dx;
+    }
+}
+
+function renderWave() {
+    ctx.lineWidth = strokeWidth;
+    ctx.strokeStyle = "#333";
+    for (x = 0; x < yValues.length; x++) {
+        ctx.beginPath();
+        ctx.moveTo(x * size - 15, 0);
+        ctx.lineTo(x * size, w / 2 + yValues[x]);
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x * size - 30, 340);
+        ctx.lineTo(x * size, w / 2 + yValues[x]);
+        ctx.closePath();
+        ctx.stroke();
+    }
+}
+
+setup();
+
+window.onload = function() {
+    var gui = new dat.GUI();
+    var controls = gui.addFolder('Controls');
+    controls.open();
+    controls.add(window, "strokeWidth", 1, 10).step(1);
+    controls.add(window, "amplitude", 0, 360).step(1);
+    controls.add(window, "size", 3, 18).onChange(function(value) {
+        cancelAnimationFrame(timing);
+        setup();
+    });
+    controls.add(window, "period", 1, 1000).step(1).onChange(function(value) {
+        cancelAnimationFrame(timing);
+        setup();
+    });
+};
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+[[source]]
+name = "pypi"
+url = "http://mirrors.cmrh.com/pypi/web/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+tornado = "*"
+click = "*"
+
+[requires]
+python_version = "3.7"

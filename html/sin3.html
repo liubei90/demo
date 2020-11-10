@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #canvas {
+      width: 500px;
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <canvas class='artboard' id='canvas' width="500" height="300"></canvas>
+
+  <script>
+    // Constants
+    var PI2 = Math.PI * 2;
+    var HALFPI = Math.PI / 2;
+
+    function ease(percent, amplitude) {
+      return amplitude * (Math.sin(percent * PI2 - HALFPI) + 1) * 0.5;
+    }
+
+    function drawSin(ctx, options) {
+      var timeModifier = 1;
+      var lineWidth = 3;
+      var amplitude = 150;
+      var wavelength = 200;
+      var segmentLength = 20;
+      var strokeStyle = 'rgba(0, 0, 0, 1)';
+
+      var x = 0;
+      var y = 0;
+      var width = 500;
+      var height = 300;
+      var speed = 10;
+      var amp = amplitude;
+      var waveLeft = 10;
+      var waveWidth = width - 2 * waveLeft;
+      var yAxis = height / 2;
+
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = strokeStyle;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+
+      ctx.moveTo(0, yAxis);
+      ctx.lineTo(waveLeft, yAxis);
+      console.log(waveLeft, yAxis);
+
+      for (var i = 0; i < 480; i += segmentLength) {
+        x = speed + (-yAxis + i) / wavelength;
+        y = Math.sign(x);
+
+        amp = ease(i / waveWidth, amplitude);
+
+        ctx.lineTo(i + waveLeft, amp * y + yAxis);
+        console.log(i + waveLeft, amp * y + yAxis);
+
+        amp = void 0;
+      }
+
+      ctx.lineTo(width, yAxis);
+      console.log(width, yAxis);
+      ctx.stroke();
+    }
+
+    function drawSin2(ctx, index) {
+      var timeModifier = 1;
+      var period = 3;
+      var lineWidth = 3;
+      var strokeStyle = 'rgba(0, 0, 0, 1)';
+      var segmentLength = 20;
+
+      var x = 0;
+      var y = 0;
+      var width = 500;
+      var height = 30;
+      var waveLeft = 0;
+      var waveWidth = width - 2 * waveLeft;
+      var yAxis = height / 2;
+
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = strokeStyle;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+
+      ctx.moveTo(0, yAxis + 150);
+      console.log(0, yAxis);
+
+      for (var i = 0; i < waveWidth; i += 1) {
+        x = waveLeft + i;
+        y = yAxis * Math.sin(2 * Math.PI * period * x / waveWidth) + 150;
+        console.log(2 * Math.PI * period * x / waveWidth)
+
+        // amp = ease(i / waveWidth, amplitude);
+
+        ctx.lineTo(x, y);
+        console.log(x, y);
+      }
+
+      ctx.lineTo(width, yAxis  + 150);
+      console.log(width, yAxis);
+      ctx.stroke();
+    }
+
+    function clear(ctx) {
+      ctx.clearRect(0, 0, 500, 300);
+    }
+
+
+    var canvas = document.querySelector('#canvas');
+    var ctx = canvas.getContext('2d');
+
+    var index = 0;
+
+    function loop() {
+
+      clear(ctx);
+      drawSin2(ctx, index);
+      index += 10
+
+      window.requestAnimationFrame(loop)
+    }
+
+    loop();
+
+
+    // ctx.beginPath();
+    // ctx.moveTo(0, 0);
+    // ctx.lineTo(500, 300);
+    // ctx.stroke();
+
+  </script>
+</body>
+</html>
