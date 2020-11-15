@@ -1,0 +1,16 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+
+<img src="{% static 'polls/images/kn.png' %}">
+
+<span>{{ refresh_count }}</span>
+
+{% if the_latest_question_list %}
+    <ul>
+    {% for question in the_latest_question_list %}
+        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }} {{ question.refresh_count }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
