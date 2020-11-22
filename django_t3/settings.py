@@ -26,9 +26,10 @@ SECRET_KEY = 'vwnq#z1*dkoy3ft_7_5(ro95pb#yfm-w6z^g8l+az2f_l-8gxw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-APPEND_SLASH=False
+APPEND_SLASH=True
 ALLOWED_HOSTS = [
     'localhost',
+    '127.0.0.1',
 ]
 
 
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'oauth2_provider',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +59,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'urls'
+
+LOGIN_URL='/admin/login/'
 
 DATABASE_ROUTERS = [
     'demo.db_routers.DemoDBRouter'

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @import url(http://fonts.googleapis.com/css?family=Raleway:100,300);
+body {
+    background-color: #222;
+    background-image: -moz-linear-gradient(top, #111111 0%, #222222 50%, #111111 100%);
+    background-image: -webkit-linear-gradient(top, #111111 0%, #222222 50%, #111111 100%);
+    background-image: linear-gradient(to bottom, #111111 0%, #222222 50%, #111111 100%);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 100;
+    color: rgba(255, 255, 255, 0.5);
+    height: 100vh;
+    width: 100vw;
+}
+#title {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 20px;
+    letter-spacing: 0.1em;
+    z-index: 100;
+}
+  </style>
+</head>
+<body>
+  <div id="title">Sine Wave Experiment</div>
+  <canvas id="waves"></canvas>
+  <script>
+
+/**
+ * Generates multiple customizable animated sines waves
+ * using a canvas element. Supports retina displays and
+ * limited mobile support
+ */
+ function SineWaveGenerator(options) {
+    // $.extend(this, options || {});
+    Object.assign(this, options);
+
+    if (!this.el) {
+        throw "No Canvas Selected";
+    }
+    this.ctx = this.el.getContext('2d');
+
+    if (!this.waves.length) {
+        throw "No waves specified";
+    }
+
+    // Internal
+    this._resizeWidth();
+    window.addEventListener('resize', this._resizeWidth.bind(this));
+    // User
+    this.resizeEvent();
+    window.addEventListener('resize', this.resizeEvent.bind(this));
+
+    if (typeof this.initialize === 'function') {
+        this.initialize.call(this);
+    }
+    this.setDestStatus();
+    // Start the magic
+    this.loop();
+}
+
+// Defaults
+SineWaveGenerator.prototype.speed = 10;
+SineWaveGenerator.prototype.amplitude = 50;
+SineWaveGenerator.prototype.wavelength = 50;
+SineWaveGenerator.prototype.segmentLength = 10;
+
+SineWaveGenerator.prototype.lineWidth = 2;
+SineWaveGenerator.prototype.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+
+SineWaveGenerator.prototype.resizeEvent = function() {};
+
+// fill the screen
+SineWaveGenerator.prototype._resizeWidth = function() {
+    this.dpr = window.devicePixelRatio || 1;
+
+    this.width = this.el.width = window.innerWidth * this.dpr;
+    this.height = this.el.height = window.innerHeight * this.dpr;
+    this.el.style.width = window.innerWidth + 'px';
+    this.el.style.height = window.innerHeight + 'px';
+
+    this.waveWidth = this.width * 0.95;
+    this.waveLeft = this.width * 0.025;
+}
+
+SineWaveGenerator.prototype.clear = function() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+}
+
+SineWaveGenerator.prototype.time = 0;
+
+SineWaveGenerator.prototype.update = function() {
+    this.time = this.time - 0.007;
+
+    var index = -1;
+    var length = this.waves.length;
+
+    while (++index < length) {
+        var timeModifier = this.waves[index].timeModifier || 1;
+        this.drawSine(this.time * timeModifier, this.waves[index]);
+    }
+    index = void 0;
+    length = void 0;
+}
+
+// Constants
+var PI2 = Math.PI * 2;
+var HALFPI = Math.PI / 2;
+
+SineWaveGenerator.prototype.ease = function(percent, amplitude) {
+    return amplitude * (Math.sin(percent * PI2 - HALFPI) + 1) * 0.5;
+}
+
+SineWaveGenerator.prototype.drawSine = function(time, options) {
+    options = options || {};
+    amplitude = options.amplitude || this.amplitude;
+    wavelength = options.wavelength || this.wavelength;
+    lineWidth = options.lineWidth || this.lineWidth;
+    strokeStyle = options.strokeStyle || this.strokeStyle;
+    segmentLength = options.segmentLength || this.segmentLength;
+
+    var x = time;
+    var y = 0;
+    var amp = this.amplitude;
+
+    // Center the waves
+    var yAxis = this.height / 2;
+
+    // Styles
+    this.ctx.lineWidth = lineWidth * this.dpr;
+    this.ctx.strokeStyle = strokeStyle;
+    this.ctx.lineCap = 'round';
+    this.ctx.lineJoin = 'round';
+    this.ctx.beginPath();
+
+    // Starting Line
+    this.ctx.moveTo(0, yAxis);
+    this.ctx.lineTo(this.waveLeft, yAxis);
+
+    for (var i = 0; i < this.waveWidth; i += segmentLength) {
+        x = (time * this.speed) + (-yAxis + i) / wavelength;
+        y = Math.sin(x);
+
+        // Easing
+        amp = this.ease(i / this.waveWidth, amplitude);
+
+        this.ctx.lineTo(i + this.waveLeft, amp * y + yAxis);
+
+        amp = void 0;
+    }
+
+    // Ending Line
+    this.ctx.lineTo(this.width, yAxis);
+
+    // Stroke it
+    this.ctx.stroke();
+
+    // Clean up
+    options = void 0;
+    amplitude = void 0;
+    wavelength = void 0;
+    lineWidth = void 0;
+    strokeStyle = void 0;
+    segmentLength = void 0;
+    x = void 0;
+    y = void 0;
+}
+
+SineWaveGenerator.prototype.setSpeed = function(speed) {
+    this.speed = speed;
+}
+
+SineWaveGenerator.prototype.loop = function() {
+    this.updateToDestStatus();
+
+    this.clear();
+    this.update();
+
+    window.requestAnimationFrame(this.loop.bind(this));
+}
+
+var abs = Math.abs;
+var max = Math.max;
+var min = Math.min;
+
+function normalized(range, status) {
+    return (abs(range[1] - range[0]) * status + abs(range[0])) * (range[0] / abs(range[0]));
+}
+
+SineWaveGenerator.prototype.destStatus = 0
+
+SineWaveGenerator.prototype.setDestStatus = function(destStatus, timeWindow) {
+  this.destStatus = destStatus;
+  var waves = this.waves;
+  var startTime = Date.now()
+  var endTime;
+
+  if (!destStatus || !timeWindow) {
+    endTime = 0;
+  } else if (timeWindow !== undefined) {
+    endTime = startTime + timeWindow * 1000;
+  } else {
+    endTime = 0;
+  }
+
+  for (var i = 0; i < waves.length; i++) {
+    waves[i]['startTime'] = startTime;
+    waves[i]['endTime'] = endTime;
+
+    this.setDestAmplitude(waves[i], destStatus);
+    this.setDestWavelength(waves[i], destStatus);
+    this.setDestTimeModifier(waves[i], destStatus);
+  }
+}
+
+SineWaveGenerator.prototype.updateToDestStatus = function() {
+  var waves = this.waves;
+
+  for (var i = 0; i < waves.length; i++) {
+    this.updateAmplitude(waves[i]);
+    this.updateWavelength(waves[i]);
+    this.updateTimeModifier(waves[i]);
+  }
+}
+
+SineWaveGenerator.prototype.updateControlVar = function(waveItem, varName, startVarName, endVarName) {
+  var nowTime = Date.now();
+  var startTime = waveItem['startTime'];
+  var endTime = waveItem['endTime'];
+
+  var startAmplitude = waveItem[startVarName];
+  var endAmplitude = waveItem[endVarName];
+
+  if (!endTime || nowTime > endTime || abs(endAmplitude - startAmplitude) < 1) {
+    return
+  }
+
+  var nowAmplitude = (nowTime - startTime) / (endTime - startTime) * (endAmplitude - startAmplitude) + startAmplitude;
+
+  waveItem[varName] = nowAmplitude;
+}
+
+SineWaveGenerator.prototype.setDestAmplitude = function(waveItem, destStatus) {
+  const amplitude = waveItem['amplitude'];
+  const amplitudeRange = waveItem['amplitudeRange'];
+  const destAmplitude = normalized(amplitudeRange, destStatus);
+
+  waveItem['startAmplitude'] = amplitude;
+  waveItem['endAmplitude'] = destAmplitude;
+}
+
+SineWaveGenerator.prototype.updateAmplitude = function(waveItem) {
+  this.updateControlVar(waveItem, 'amplitude', 'startAmplitude', 'endAmplitude');
+//   console.log(waveItem['amplitude']);
+}
+
+SineWaveGenerator.prototype.setDestWavelength = function(waveItem, destStatus) {
+  const wavelength = waveItem['wavelength'];
+  const wavelengthRange = waveItem['wavelengthRange'];
+  const destWavelength = normalized(wavelengthRange, 1 - destStatus);
+
+  waveItem['startWavelength'] = wavelength;
+  waveItem['endWavelength'] = destWavelength;
+}
+
+SineWaveGenerator.prototype.updateWavelength = function(waveItem) {
+  this.updateControlVar(waveItem, 'wavelength', 'startWavelength', 'endWavelength');
+//   console.log(waveItem['wavelength']);
+}
+
+SineWaveGenerator.prototype.setDestTimeModifier = function(waveItem, destStatus) {
+  const timeModifier = waveItem['timeModifier'];
+  const timeModifierRange = waveItem['timeModifierRange'];
+  const destTimeModifier = normalized(timeModifierRange, destStatus);
+
+  waveItem['startTimeModifier'] = timeModifier;
+  waveItem['endTimeModifier'] = destTimeModifier;
+}
+
+SineWaveGenerator.prototype.updateTimeModifier = function(waveItem) {
+  this.updateControlVar(waveItem, 'timeModifier', 'startTimeModifier', 'endTimeModifier');
+//   console.log(waveItem['timeModifier']);
+}
+
+var waves = [{
+        lineWidth: 3,
+        segmentLength: 2,
+        amplitude: 5,
+        amplitudeRange: [5, 200],
+        wavelength: 30,
+        wavelengthRange: [30, 100],
+        timeModifier: 20,
+        timeModifierRange: [20, 50],
+    // }, {
+    //     lineWidth: 3,
+    //     segmentLength: 2,
+    //     amplitude: -5,
+    //     amplitudeRange: [-5, -200],
+    //     wavelength: 100,
+    //     wavelengthRange: [30, 100],
+    //     timeModifier: 20,
+    //     timeModifierRange: [20, 50],
+    // }, {
+    //     timeModifier: 50,
+    //     lineWidth: 3,
+    //     amplitude: 100,
+    //     wavelength: 50,
+    //     segmentLength: 10,
+    // }, {
+    //     timeModifier: 50,
+    //     lineWidth: 3,
+    //     amplitude: -100,
+    //     wavelength: 50,
+    //     segmentLength: 10,
+    }];
+
+var sinWave = new SineWaveGenerator({
+    el: document.getElementById('waves'),
+
+    speed: 1,
+
+    waves: waves,
+
+    initialize: function() {
+
+    },
+
+    resizeEvent: function() {
+        var gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
+        gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+        gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.5)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        var index = -1;
+        var length = this.waves.length;
+        while (++index < length) {
+            this.waves[index].strokeStyle = gradient;
+        }
+
+        // Clean Up
+        index = void 0;
+        length = void 0;
+        gradient = void 0;
+    }
+});
+
+// sinWave.setDestStatus(0.9, 0.1);
+
+// setTimeout(function() {
+//     sinWave.setDestStatus(0.1, 0.1);
+// }, 700);
+
+
+var testCount = 1;
+var d = 1;
+
+setInterval(function() {
+    // testCount += d;
+    
+    // if (testCount > 8 && d > 0) {
+    //     d = -1;
+    // } else if (testCount < 1 && d < 0) {
+    //     d = 1;
+    // }
+
+    testCount = testCount === 1 ? 9 : 1;
+
+    console.log(testCount/10);
+    sinWave.setDestStatus(testCount / 10, 0.1);
+}, 500);
+
+
+</script>
+</body>
+</html>

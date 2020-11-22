@@ -1,3 +1,5 @@
 node_modules/
 .vscode/
 dist/
+django_t3/django/
+django_t3/rest_framework/

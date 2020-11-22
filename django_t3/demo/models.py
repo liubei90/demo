@@ -53,7 +53,7 @@ class DPosts(models.Model):
     post_author = models.IntegerField(db_index=True)
     post_date = models.DateTimeField(null=True, blank=True)
     post_date_gmt = models.DateTimeField(null=True, blank=True)
-    post_content = models.TextField()
+    post_content = models.TextField(null=True, blank=True)
     post_title = models.CharField(max_length=255)
     post_excerpt = models.TextField(default='')
     post_status = models.CharField(max_length=20, default='publish')
