@@ -63,8 +63,8 @@ async def receive_change(change_logs):
     # subscriber_count
 
     cache_data = []
-    # async for change in change_logs:
-    #     print(change)
+    async for change in change_logs:
+        await asyncio.sleep(1000)
 
         # cache_data.append(change)
         # for c in change:
