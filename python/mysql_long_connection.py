@@ -1,5 +1,6 @@
 import asyncio
 import traceback
+from pymysql.err import OperationalError
 from aiomysql import connect
 
 g_connection = None
@@ -7,7 +8,7 @@ g_connection = None
 
 async def ensure_connect():
     global g_connection
-    g_connection = await connect('localhost', user='root', db='demo')
+    g_connection = await connect('localhost', user='root', password="root", db='demo')
 
 
 async def start():
@@ -31,6 +32,11 @@ async def start():
                 
                 print('res:')
                 print(res)
+            except OperationalError as e:
+                print(e.args)
+                print(e.args[0])
+                print(type(e.args[0]))
+                # print(traceback.format_exc())
             except Exception as e:
                 print(type(e))
                 print(e.__dict__)
