@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.0.2/vue.runtime.global.js"></script>
+</head>
+<body>
+  <div id="app2"></div>
+
+  <script>
+    var Vue = window.Vue;
+    var defineComponent = Vue.defineComponent;
+    var h = Vue.h;
+  </script>
+
+  <script>
+    var app1 = (function () {
+      // app1
+      var TodoList = defineComponent({
+        emits: ['click'],
+        props: ['todoList'],
+        setup: function() {
+          return {}
+        },
+        render: function() {
+          // var TodoItem = app.component('todo-item');
+
+          // return 'hello, world';
+
+          return h('ul', this.todoList.map(
+            item => h(TodoItem, {
+              item: item,
+              onClick: () => {
+                this.$emit('click', item);
+              }
+            })
+          ));
+        }
+      })
+
+      var TodoItem = defineComponent({
+        props: ['item'],
+        render: function() {
+          return h('li', this.item)
+        }
+      })
+
+
+      var app1 = Vue.createApp({
+        setup: function() {
+          return function() {
+            // var TodoList = app.component('todo-list');
+            // console.log(TodoList);
+
+            // return h('div', 'hello, world');
+            return h(TodoList, {
+              todoList: ['1', '2', '3'],
+              onClick: function(e) {
+                console.log(e);
+              }
+            })
+            // return h('todo-list', {
+            //   todoList: ['1', '2', '3']
+            // })
+          }
+        }
+      })
+
+      // app.component('todo-item', {
+      //   props: ['item'],
+      //   render: function() {
+      //     return h('li', this.item)
+      //   }
+      // })
+
+      // app.component('todo-list', {
+      //   emits: ['click'],
+      //   props: ['todoList'],
+      //   setup: function() {
+      //     return {}
+      //   },
+      //   render: function() {
+      //     var TodoItem = app.component('todo-item');
+
+      //     return h('ul', this.todoList.map(
+      //       item => h(TodoItem, {
+      //         item: item,
+      //         onClick: () => {
+      //           this.$emit('click', item);
+      //         }
+      //       })
+      //     ));
+      //   }
+      // });
+
+      app1.mount('#app1');
+
+      return app1;
+    })()
+  </script>
+
+  <script>
+    var app2 = (function() {
+      var Test = defineComponent({
+        emits: ['hhh'],
+        props: ['t'],
+        setup(props, { attrs, slots, emit }) {
+          console.log(props, attrs, slots, emit);
+
+          return function() {
+            return h('div', { onTlick: () => { emit('hhh', '123123') } }, 'hello, world');
+          }
+        }
+      });
+
+      var app = Vue.createApp({
+        inheritAttrs: false,
+        setup(props, { attrs, slots, emit }) {
+          return function() {
+            vn = h(Test, { 
+              onHhh: (e) => { console.log(e) }, 
+              onClick: (e) => { console.log(e) },
+              't': '2020'
+            }, ['1', '2']);
+            console.log(vn);
+            return vn;
+          }
+        }
+      }, { 'a': 'b' })
+
+      app.mount('#app2');
+
+      return app;
+    })()
+  </script>
+</body>
+</html>
